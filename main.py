@@ -1,17 +1,24 @@
 from datetime import datetime
+import sys
+import os
+from dotenv import load_dotenv
 from crawler import WebsiteCrawler
 from page_finder import PageFinder
 from extractor import DataExtractor
+from llm_extractor import LLMExtractor
 from schemas import (
     UniversityData,
     Overview,
     Contact,
     AdmissionDeadline,
     TuitionItem,
-    PageMetadata
+    PageMetadata,
+    Location
 )
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
 def main():
-    domain = "https://www.bucknell.edu"
+    domain = sys.argv[1]
     crawler = WebsiteCrawler(max_depth=2)
     urls = crawler.crawl(domain)
     finder = PageFinder()
@@ -28,37 +35,72 @@ def main():
     email = extractor.extract_email(admissions_text)
     phone = extractor.extract_phone(admissions_text)
     deadline = extractor.extract_deadline(admissions_text)
-    result = UniversityData(
-    overview=Overview(
-        university_name=university_name,
-        contact=Contact(
-            email=email,
-            phone=phone)),
-    admission_deadlines=[
-        AdmissionDeadline(
-            deadline_date=deadline)],
-    tuition_breakdown=[
-        TuitionItem(
-            fee_type="Tuition",cost=int(tuition_cost.replace("$", "").replace(",", "")) if tuition_cost else None,currency="USD")],
-    page_metadata=[
-        PageMetadata(
-            url=admissions_page,
-            page_title=extractor.extract_page_title(
-                admissions_html
-            ),
-            scraped_at=datetime.now().isoformat(),
-            status_code="200"
-        ),
-        PageMetadata(
-            url=tuition_page,
-            page_title=extractor.extract_page_title(
-                tuition_html
-            ),
-            scraped_at=datetime.now().isoformat(),
-            status_code="200"
+    llm_data = {}
+    if api_key:
+        try:
+            combined_text = homepage_html
+            llm = LLMExtractor(api_key)
+            llm_data = llm.extract_structured_data(
+                combined_text
+            )
+            print("Using LLM fallback...")
+        except Exception as e:
+            print(f"LLM fallback failed: {e}")
+            llm_data = {}
+    location = Location(
+        city=llm_data.get("city"),
+        state=llm_data.get("state"),
+        country=llm_data.get("country")
+    )
+    tuition_value = None
+    if tuition_cost:
+        tuition_value = int(
+            tuition_cost.replace("$", "")
+            .replace(",", "")
         )
-    ]
-)
+    elif llm_data.get("tuition"):
+        tuition_value = llm_data.get("tuition")
+    final_deadline = deadline or llm_data.get("deadline")
+    result = UniversityData(
+        overview=Overview(
+            university_name=university_name,
+            location=location,
+            contact=Contact(
+                email=email,
+                phone=phone
+            )
+        ),
+        admission_deadlines=[
+            AdmissionDeadline(
+                deadline_date=final_deadline
+            )
+        ],
+        tuition_breakdown=[
+            TuitionItem(
+                fee_type="Tuition",
+                cost=tuition_value,
+                currency="USD"
+            )
+        ],
+        page_metadata=[
+            PageMetadata(
+                url=admissions_page,
+                page_title=extractor.extract_page_title(
+                    admissions_html
+                ),
+                scraped_at=datetime.now().isoformat(),
+                status_code="200"
+            ),
+            PageMetadata(
+                url=tuition_page,
+                page_title=extractor.extract_page_title(
+                    tuition_html
+                ),
+                scraped_at=datetime.now().isoformat(),
+                status_code="200"
+            )
+        ]
+    )
     print(result.model_dump_json(indent=4))
 if __name__ == "__main__":
     main()
