@@ -60,3 +60,16 @@ class DataExtractor:
         if emails:
             return emails[0].strip(".,;:()[]{}")
         return None
+    
+    def extract_tuition(self, text):
+        pattern = r"\$[\d,]+"
+        matches = re.findall(pattern,text)
+        if matches:
+            return matches[0]
+        return None
+    
+    def extract_page_title(self, html):
+        soup = BeautifulSoup(html,"html.parser")
+        if soup.title:
+            return soup.title.get_text(strip=True)
+        return None
