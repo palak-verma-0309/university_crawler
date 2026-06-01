@@ -15,6 +15,11 @@ from schemas import (
     PageMetadata,
     Location
 )
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 def main():
@@ -43,7 +48,7 @@ def main():
             llm_data = llm.extract_structured_data(
                 combined_text
             )
-            print("Using LLM fallback...")
+            logging.info("Using LLM fallback")
         except Exception as e:
             print(f"LLM fallback failed: {e}")
             llm_data = {}
@@ -101,6 +106,11 @@ def main():
             )
         ]
     )
+    logging.info("Execution Summary")
+    logging.info(f"URLs Crawled: {len(urls)}")
+    logging.info(f"Admissions Page: {admissions_page}")
+    logging.info(f"Tuition Page: {tuition_page}")
+    logging.info(f"University: {university_name}")
     print(result.model_dump_json(indent=4))
 if __name__ == "__main__":
     main()
