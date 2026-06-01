@@ -42,3 +42,21 @@ class DataExtractor:
         if match:
             return match.group(0)
         return None
+    def extract_university_name(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        if soup.title and soup.title.string:
+            title = soup.title.string.strip()
+            if "|" in title:
+                parts = [p.strip() for p in title.split("|")]
+                for part in parts:
+                    if "university" in part.lower():
+                        return part
+
+            if "university" in title.lower():
+                 return title
+        return None
+    def extract_email(self, text):
+        emails = re.findall(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",text)
+        if emails:
+            return emails[0].strip(".,;:()[]{}")
+        return None
