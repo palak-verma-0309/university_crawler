@@ -1,0 +1,55 @@
+2026-06-02 01:29:58,675 - INFO - AFC is enabled with max remote calls: 10.
+2026-06-02 01:30:04,858 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-06-02 01:30:04,869 - INFO - Using LLM location extraction
+2026-06-02 01:30:05,039 - INFO - Execution Summary
+2026-06-02 01:30:05,042 - INFO - URLs Crawled: 801
+2026-06-02 01:30:05,044 - INFO - Admissions Page: https://www.salisbury.edu/admissions/apply-now.aspx
+2026-06-02 01:30:05,045 - INFO - Tuition Page: https://www.salisbury.edu/admissions/financial-aid/cost-of-attendance/
+2026-06-02 01:30:05,047 - INFO - University: Salisbury University, Universities in Maryland
+2026-06-02 01:30:05,050 - INFO - Data Quality Issues: 1
+
+Data Quality Issues:
+- Admission deadline missing
+{
+    "overview": {
+        "university_name": "Salisbury University, Universities in Maryland",
+        "location": {
+            "city": "Salisbury",
+            "state": "MD",
+            "country": "USA",
+            "postal_code": null
+        },
+        "contact": {
+            "phone": "410-543-6000",
+            "email": null
+        }
+    },
+    "tuition_breakdown": [
+        {
+            "fee_type": "Tuition",
+            "cost": 11466,
+            "currency": "USD"
+        }
+    ],
+    "admission_deadlines": [
+        {
+            "deadline_type": null,
+            "deadline_date": null,
+            "notes": null
+        }
+    ],
+    "page_metadata": [
+        {
+            "url": "https://www.salisbury.edu/admissions/apply-now.aspx",
+            "page_title": "Apply Now | Salisbury University",
+            "scraped_at": "2026-06-02T01:30:04.932925",
+            "status_code": "200"
+        },
+        {
+            "url": "https://www.salisbury.edu/admissions/financial-aid/cost-of-attendance/",
+            "page_title": "Salisbury University Cost of Attendance | Salisbury University",
+            "scraped_at": "2026-06-02T01:30:05.039743",
+            "status_code": "200"
+        }
+    ]
+}

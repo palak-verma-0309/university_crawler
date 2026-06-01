@@ -1,0 +1,55 @@
+2026-06-02 01:36:02,446 - INFO - AFC is enabled with max remote calls: 10.
+2026-06-02 01:36:07,933 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-06-02 01:36:07,937 - INFO - Using LLM location extraction
+2026-06-02 01:36:08,092 - INFO - Execution Summary
+2026-06-02 01:36:08,092 - INFO - URLs Crawled: 1291
+2026-06-02 01:36:08,093 - INFO - Admissions Page: https://www.udc.edu/admissions/faq
+2026-06-02 01:36:08,093 - INFO - Tuition Page: https://www.udc.edu/admissions/tuition-fees
+2026-06-02 01:36:08,093 - INFO - University: University of the District of Columbia, Washington, DC - HBCU, Land-Grant University
+2026-06-02 01:36:08,093 - INFO - Data Quality Issues: 1
+
+Data Quality Issues:
+- Suspicious tuition value detected
+{
+    "overview": {
+        "university_name": "University of the District of Columbia, Washington, DC - HBCU, Land-Grant University",
+        "location": {
+            "city": "Washington",
+            "state": "DC",
+            "country": "United States",
+            "postal_code": null
+        },
+        "contact": {
+            "phone": "202-274-5157",
+            "email": null
+        }
+    },
+    "tuition_breakdown": [
+        {
+            "fee_type": "Tuition",
+            "cost": 324,
+            "currency": "USD"
+        }
+    ],
+    "admission_deadlines": [
+        {
+            "deadline_type": null,
+            "deadline_date": "August 1",
+            "notes": null
+        }
+    ],
+    "page_metadata": [
+        {
+            "url": "https://www.udc.edu/admissions/faq",
+            "page_title": "Admission Frequently Asked Questions | Admissions | University of the District of Columbia",
+            "scraped_at": "2026-06-02T01:36:08.006592",
+            "status_code": "200"
+        },
+        {
+            "url": "https://www.udc.edu/admissions/tuition-fees",
+            "page_title": "Tuition & Fees | Admissions | University of the District of Columbia",
+            "scraped_at": "2026-06-02T01:36:08.092716",
+            "status_code": "200"
+        }
+    ]
+}

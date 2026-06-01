@@ -1,0 +1,52 @@
+2026-06-02 01:25:58,997 - INFO - AFC is enabled with max remote calls: 10.
+2026-06-02 01:26:04,442 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-06-02 01:26:04,449 - INFO - Using LLM location extraction
+2026-06-02 01:26:04,644 - INFO - Execution Summary
+2026-06-02 01:26:04,645 - INFO - URLs Crawled: 646
+2026-06-02 01:26:04,645 - INFO - Admissions Page: https://www.bucknell.edu/admissions-aid/apply-bucknell
+2026-06-02 01:26:04,645 - INFO - Tuition Page: https://www.bucknell.edu/admissions-aid/tuition-fees-financial-aid
+2026-06-02 01:26:04,646 - INFO - University: Bucknell University
+2026-06-02 01:26:04,646 - INFO - Data Quality Issues: 0
+{
+    "overview": {
+        "university_name": "Bucknell University",
+        "location": {
+            "city": null,
+            "state": "Pennsylvania",
+            "country": null,
+            "postal_code": null
+        },
+        "contact": {
+            "phone": "570-577-3000",
+            "email": "appdocs@bucknell.edu"
+        }
+    },
+    "tuition_breakdown": [
+        {
+            "fee_type": "Tuition",
+            "cost": 72600,
+            "currency": "USD"
+        }
+    ],
+    "admission_deadlines": [
+        {
+            "deadline_type": null,
+            "deadline_date": "April 1",
+            "notes": null
+        }
+    ],
+    "page_metadata": [
+        {
+            "url": "https://www.bucknell.edu/admissions-aid/apply-bucknell",
+            "page_title": "Apply to Bucknell",
+            "scraped_at": "2026-06-02T01:26:04.559448",
+            "status_code": "200"
+        },
+        {
+            "url": "https://www.bucknell.edu/admissions-aid/tuition-fees-financial-aid",
+            "page_title": "Tuition, Fees & Financial Aid",
+            "scraped_at": "2026-06-02T01:26:04.644431",
+            "status_code": "200"
+        }
+    ]
+}
