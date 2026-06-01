@@ -3,3 +3,4 @@ beautifulsoup4
 pydantic
 lxml
 email-validator
+pytest
