@@ -22,6 +22,23 @@ logging.basicConfig(
 )
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
+def validate_data(result):
+    issues = []
+    if not result.overview:
+        issues.append("Overview missing")
+    elif not result.overview.university_name:
+        issues.append("University name missing")
+    if not result.tuition_breakdown:
+        issues.append("Tuition data missing")
+    elif (
+        result.tuition_breakdown[0].cost is not None
+        and result.tuition_breakdown[0].cost < 1000):
+        issues.append("Suspicious tuition value detected")
+    if not result.admission_deadlines:
+        issues.append("Admission deadline missing")
+    elif not result.admission_deadlines[0].deadline_date:
+        issues.append("Admission deadline missing")
+    return issues
 def main():
     domain = sys.argv[1]
     crawler = WebsiteCrawler(max_depth=2)
@@ -106,11 +123,17 @@ def main():
             )
         ]
     )
+    issues = validate_data(result)
     logging.info("Execution Summary")
     logging.info(f"URLs Crawled: {len(urls)}")
     logging.info(f"Admissions Page: {admissions_page}")
     logging.info(f"Tuition Page: {tuition_page}")
     logging.info(f"University: {university_name}")
+    logging.info(f"Data Quality Issues: {len(issues)}")
+    if issues:
+        print("\nData Quality Issues:")
+        for issue in issues:
+            print(f"- {issue}")
     print(result.model_dump_json(indent=4))
 if __name__ == "__main__":
     main()
