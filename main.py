@@ -1,6 +1,7 @@
 from datetime import datetime
 import sys
 import os
+import logging
 from dotenv import load_dotenv
 from crawler import WebsiteCrawler
 from page_finder import PageFinder
@@ -15,7 +16,6 @@ from schemas import (
     PageMetadata,
     Location
 )
-import logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
@@ -30,17 +30,14 @@ def validate_data(result):
         issues.append("University name missing")
     if not result.tuition_breakdown:
         issues.append("Tuition data missing")
-    elif (
-        result.tuition_breakdown[0].cost is not None
-        and result.tuition_breakdown[0].cost < 1000):
+    elif (result.tuition_breakdown[0].cost is not Noneand result.tuition_breakdown[0].cost < 1000):
         issues.append("Suspicious tuition value detected")
     if not result.admission_deadlines:
         issues.append("Admission deadline missing")
     elif not result.admission_deadlines[0].deadline_date:
         issues.append("Admission deadline missing")
     return issues
-def main():
-    domain = sys.argv[1]
+def process_domain(domain):
     crawler = WebsiteCrawler(max_depth=2)
     urls = crawler.crawl(domain)
     finder = PageFinder()
@@ -60,14 +57,11 @@ def main():
     llm_data = {}
     if api_key:
         try:
-            combined_text = homepage_html
             llm = LLMExtractor(api_key)
-            llm_data = llm.extract_structured_data(
-                combined_text
-            )
-            logging.info("Using LLM fallback")
+            llm_data = llm.extract_structured_data(homepage_html)
+            logging.info("Using LLM location extraction")
         except Exception as e:
-            print(f"LLM fallback failed: {e}")
+            logging.error(f"LLM extraction failed: {e}")
             llm_data = {}
     location = Location(
         city=llm_data.get("city"),
@@ -76,64 +70,63 @@ def main():
     )
     tuition_value = None
     if tuition_cost:
-        tuition_value = int(
-            tuition_cost.replace("$", "")
-            .replace(",", "")
-        )
+        tuition_value = int(tuition_cost.replace("$", "").replace(",", ""))
     elif llm_data.get("tuition"):
         tuition_value = llm_data.get("tuition")
-    final_deadline = deadline or llm_data.get("deadline")
+    final_deadline = (deadline or llm_data.get("deadline"))
     result = UniversityData(
         overview=Overview(
             university_name=university_name,
             location=location,
             contact=Contact(
                 email=email,
-                phone=phone
-            )
-        ),
-        admission_deadlines=[
-            AdmissionDeadline(
-                deadline_date=final_deadline
-            )
-        ],
+                phone=phone)),
+        admission_deadlines=[AdmissionDeadline(deadline_date=final_deadline)],
         tuition_breakdown=[
             TuitionItem(
                 fee_type="Tuition",
                 cost=tuition_value,
-                currency="USD"
-            )
-        ],
+                currency="USD")],
         page_metadata=[
             PageMetadata(
                 url=admissions_page,
                 page_title=extractor.extract_page_title(
-                    admissions_html
-                ),
+                    admissions_html),
                 scraped_at=datetime.now().isoformat(),
-                status_code="200"
-            ),
+                status_code="200"),
             PageMetadata(
                 url=tuition_page,
                 page_title=extractor.extract_page_title(
-                    tuition_html
-                ),
+                    tuition_html),
                 scraped_at=datetime.now().isoformat(),
-                status_code="200"
-            )
-        ]
-    )
+                status_code="200")])
     issues = validate_data(result)
+
     logging.info("Execution Summary")
     logging.info(f"URLs Crawled: {len(urls)}")
     logging.info(f"Admissions Page: {admissions_page}")
     logging.info(f"Tuition Page: {tuition_page}")
     logging.info(f"University: {university_name}")
     logging.info(f"Data Quality Issues: {len(issues)}")
+
     if issues:
         print("\nData Quality Issues:")
         for issue in issues:
             print(f"- {issue}")
     print(result.model_dump_json(indent=4))
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <domain1> <domain2> ...")
+        sys.exit(1)
+    domains = sys.argv[1:]
+    for domain in domains:
+        print("\n" + "=" * 80)
+        print(f"Processing: {domain}")
+        print("=" * 80)
+        try:
+            process_domain(domain)
+        except Exception as e:
+            logging.error(f"Failed processing {domain}: {e}")
 if __name__ == "__main__":
     main()
