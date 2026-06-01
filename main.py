@@ -30,7 +30,7 @@ def validate_data(result):
         issues.append("University name missing")
     if not result.tuition_breakdown:
         issues.append("Tuition data missing")
-    elif (result.tuition_breakdown[0].cost is not Noneand result.tuition_breakdown[0].cost < 1000):
+    elif (result.tuition_breakdown[0].cost is not None and result.tuition_breakdown[0].cost < 1000):
         issues.append("Suspicious tuition value detected")
     if not result.admission_deadlines:
         issues.append("Admission deadline missing")

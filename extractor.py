@@ -21,10 +21,6 @@ class DataExtractor:
         soup = BeautifulSoup(html,"html.parser")
         return soup.get_text(separator=" ",strip=True)
 
-    def extract_email(self, text):
-        emails = re.findall(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",text)
-        return emails[0] if emails else None
-
     def extract_phone(self, text):
         phones = re.findall(r"\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}", text)
         return phones[0] if phones else None
